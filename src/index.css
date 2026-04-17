@@ -38,15 +38,37 @@
 }
 
 .art-header {
-  @apply border-b-2 border-art-ink py-8 px-4 flex justify-between items-end mb-8 bg-art-bg sticky top-0 z-40;
+  @apply border-b-2 border-art-ink py-6 md:py-8 px-4 flex justify-between items-end bg-art-bg sticky top-0 z-40;
 }
 
 .art-logo {
-  @apply text-5xl font-black leading-[0.8] tracking-[-2px] uppercase font-display;
+  @apply text-3xl md:text-5xl font-black leading-[0.8] tracking-[-2px] uppercase font-display;
 }
 
 .art-meta {
-  @apply text-[14px] font-bold uppercase tracking-[2px] font-display;
+  @apply text-[11px] md:text-[14px] font-bold uppercase tracking-[2px] font-display max-w-[150px] md:max-w-none;
+}
+
+/* Custom Scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.art-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-art-ink) transparent;
+}
+
+.art-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.art-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--color-art-ink);
 }
 
 

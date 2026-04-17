@@ -14,7 +14,8 @@ import {
   ChevronRight, 
   X, 
   Plus,
-  ArrowRight
+  ArrowRight,
+  MapPin
 } from 'lucide-react';
 import { SESSIONS, VENUES } from './constants';
 import { SharedStateService } from './services/sharedState';
@@ -25,9 +26,10 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'schedule' | 'greetings' | 'travel' | 'gallery' | 'feedback'>('schedule');
   const [showSelfieModal, setShowSelfieModal] = useState(false);
   const [showTravelModal, setShowTravelModal] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
 
   return (
-    <div className="min-h-screen bg-art-bg selection:bg-art-accent selection:text-white pb-20 lg:pb-0">
+    <div className="min-h-screen bg-art-bg selection:bg-art-accent selection:text-white pb-20 md:pb-0">
       {/* Universal Header */}
       <header className="art-header">
         <div className="art-logo">SF<br />PULSE</div>
@@ -37,15 +39,16 @@ export default function App() {
         </div>
       </header>
 
-      {/* Desktop Dashboard Layout (lg screens) */}
-      <div className="hidden lg:grid grid-cols-[320px_1fr_300px] h-[calc(100vh-140px)] gap-0 border-t border-art-ink overflow-hidden">
-        {/* Left Column: Schedule */}
+      {/* Responsive Dashboard Layout */}
+      {/* lg: 3 cols, md: 2 cols, sm: mobile tabs */}
+      <div className="hidden md:grid h-[calc(100vh-140px)] gap-0 border-t border-art-ink overflow-hidden md:grid-cols-2 lg:grid-cols-[320px_1fr_300px]">
+        {/* Left Column: Schedule (Always visible on Md+) */}
         <div className="border-r border-art-ink overflow-y-auto p-6 scrollbar-hide">
           <div className="art-section-title">Daily Itinerary</div>
-          <ScheduleTimeline />
+          <ScheduleTimeline onSelect={setSelectedSession} />
         </div>
 
-        {/* Center: Community Hub */}
+        {/* Center: Community Hub (Always visible on Md+) */}
         <div className="bg-white overflow-y-auto flex flex-col scrollbar-hide">
           {/* Top Half: Greetings Module */}
           <div className="border-b border-art-gray p-8 flex flex-col items-center text-center">
@@ -71,10 +74,29 @@ export default function App() {
             </div>
             <GreetingsGrid compact />
           </div>
+
+          {/* Logistics Tablet View (Visible only on Md and hidden on Lg) */}
+          <div className="lg:hidden p-8 bg-art-bg border-t border-art-ink">
+            <div className="art-section-title">Logistics</div>
+            <div className="grid grid-cols-2 gap-8">
+               <section>
+                <div className="text-[10px] font-black uppercase mb-4 opacity-40">Directions</div>
+                <div className="space-y-3">
+                  <MiniVenueMap venue={VENUES.MORNING} label="AM Session" />
+                  <MiniVenueMap venue={VENUES.AFTERNOON} label="PM Session" />
+                </div>
+              </section>
+              <section>
+                <div className="text-[10px] font-black uppercase mb-4 opacity-40">Travel coordination</div>
+                <TravelList compact />
+                <button onClick={() => setShowTravelModal(true)} className="w-full mt-4 text-[10px] font-black uppercase border-b border-art-ink pb-1 text-left">Post ride request →</button>
+              </section>
+            </div>
+          </div>
         </div>
 
-        {/* Right Column: Utils & Logistics */}
-        <div className="border-l border-art-ink overflow-y-auto p-6 bg-art-bg scrollbar-hide">
+        {/* Right Column: Utils & Logistics (Visible only on Lg) */}
+        <div className="hidden lg:block border-l border-art-ink overflow-y-auto p-6 bg-art-bg scrollbar-hide">
           <div className="space-y-12">
             <section>
               <div className="art-section-title">Directions</div>
@@ -100,9 +122,9 @@ export default function App() {
       </div>
 
       {/* Mobile Tabbed View (Base View) */}
-      <div className="lg:hidden p-4">
+      <div className="md:hidden p-4">
         <AnimatePresence mode="wait">
-          {activeTab === 'schedule' && <ScheduleView />}
+          {activeTab === 'schedule' && <ScheduleView onSelect={setSelectedSession} />}
           {activeTab === 'greetings' && <GreetingsView onAdd={() => setShowSelfieModal(true)} />}
           {activeTab === 'travel' && <TravelView onAdd={() => setShowTravelModal(true)} />}
           {activeTab === 'gallery' && <GalleryView />}
@@ -110,8 +132,8 @@ export default function App() {
         </AnimatePresence>
       </div>
 
-      {/* Mobile Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 h-16 bg-white border-t-2 border-art-ink flex items-center justify-around lg:hidden px-2">
+      {/* Device Navigation (Mobile only) */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 h-16 bg-white border-t-2 border-art-ink flex items-center justify-around md:hidden px-2">
         <MobileNavButton active={activeTab === 'schedule'} onClick={() => setActiveTab('schedule')} icon={<Calendar size={22} />} />
         <MobileNavButton active={activeTab === 'greetings'} onClick={() => setActiveTab('greetings')} icon={<Camera size={22} />} />
         <MobileNavButton active={activeTab === 'travel'} onClick={() => setActiveTab('travel')} icon={<Car size={22} />} />
@@ -121,6 +143,7 @@ export default function App() {
 
       {/* Modals */}
       <AnimatePresence>
+        {selectedSession && <SessionDetailModal session={selectedSession} onClose={() => setSelectedSession(null)} />}
         {showSelfieModal && <SelfieModal onClose={() => setShowSelfieModal(false)} />}
         {showTravelModal && <TravelModal onClose={() => setShowTravelModal(false)} />}
       </AnimatePresence>
@@ -153,15 +176,22 @@ function MiniVenueMap({ venue, label }: { venue: typeof VENUES.MORNING, label: s
 
 // --- SHARED COMPONENTS ---
 
-function ScheduleTimeline() {
+function ScheduleTimeline({ onSelect }: { onSelect: (s: Session) => void }) {
   return (
     <div className="space-y-4">
       {SESSIONS.map((session) => (
-        <div key={session.id} className="art-sched-item">
+        <button 
+          key={session.id} 
+          onClick={() => onSelect(session)}
+          className="art-sched-item w-full text-left group transition-all hover:bg-white/40"
+        >
           <div className="text-[12px] font-black">{session.time}</div>
           <div className="text-[18px] font-bold leading-tight font-display py-1">{session.title}</div>
-          <div className="text-[11px] uppercase font-black text-art-accent">{session.location}</div>
-        </div>
+          <div className="flex justify-between items-center">
+            <div className="text-[11px] uppercase font-black text-art-accent">{session.location}</div>
+            <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+        </button>
       ))}
     </div>
   );
@@ -233,11 +263,11 @@ function GreetingsGrid({ compact }: { compact?: boolean }) {
 
 // --- VIEWS ---
 
-function ScheduleView() {
+function ScheduleView({ onSelect }: { onSelect: (s: Session) => void }) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       <div className="art-section-title">Daily Itinerary</div>
-      <ScheduleTimeline />
+      <ScheduleTimeline onSelect={onSelect} />
     </motion.div>
   );
 }
@@ -387,6 +417,41 @@ function AddPhotoForm({ onComplete }: { onComplete: () => void }) {
 }
 
 // --- MODALS ---
+
+function SessionDetailModal({ session, onClose }: { session: Session, onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-art-ink/80 backdrop-blur-md" onClick={onClose} />
+      <motion.div 
+        initial={{ y: 20, opacity: 0 }} 
+        animate={{ y: 0, opacity: 1 }} 
+        exit={{ y: 20, opacity: 0 }} 
+        className="relative bg-white border-4 border-art-ink w-full max-w-lg overflow-hidden shadow-[20px_20px_0px_0px_rgba(255,79,0,1)]"
+      >
+        <button onClick={onClose} className="absolute top-6 right-6 p-2 text-art-ink hover:text-art-accent"><X size={24} /></button>
+        <div className="p-10 space-y-8">
+          <div className="space-y-2">
+            <span className="art-pill bg-art-accent text-white">{session.type}</span>
+            <div className="text-sm font-black text-art-ink/40">{session.time}</div>
+          </div>
+          
+          <h2 className="text-4xl font-black font-display uppercase leading-none tracking-tight">{session.title}</h2>
+          
+          <div className="flex items-center gap-2 text-art-accent">
+             <MapPin size={16} />
+             <span className="font-bold text-sm uppercase">{session.location}</span>
+          </div>
+
+          <p className="text-lg font-medium leading-relaxed border-t-2 border-art-ink pt-8">
+            {session.description}
+          </p>
+
+          <button onClick={onClose} className="w-full art-btn-primary py-5 uppercase italic">Close Detail</button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
 function SelfieModal({ onClose }: { onClose: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
