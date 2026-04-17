@@ -1,0 +1,9 @@
+{
+  "name": "SF Pulse",
+  "description": "Your ultimate companion for the SF Conference. Explore the schedule, coordinate travel, share moments, and connect with fellow guests.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ],
+  "majorCapabilities": []
+}

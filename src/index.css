@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  
+  --color-art-bg: #F8F8F6;
+  --color-art-ink: #111111;
+  --color-art-accent: #FF4F00;
+  --color-art-gray: #E0E0DE;
+}
+
+@layer base {
+  body {
+    @apply bg-art-bg text-art-ink antialiased font-sans;
+  }
+}
+
+.art-section-title {
+  @apply text-[11px] uppercase tracking-[3px] opacity-50 mb-6 font-bold;
+}
+
+.art-card {
+  @apply bg-white border border-art-ink p-6;
+}
+
+.art-btn-primary {
+  @apply bg-art-ink text-white px-6 py-3 text-[12px] font-bold uppercase tracking-wider transition-all hover:bg-art-accent;
+}
+
+.art-sched-item {
+  @apply border-l-4 border-art-accent pl-4 mb-8;
+}
+
+.art-pill {
+  @apply inline-block px-2 py-1 bg-art-gray rounded-full text-[10px] font-black uppercase tracking-tighter;
+}
+
+.art-header {
+  @apply border-b-2 border-art-ink py-8 px-4 flex justify-between items-end mb-8 bg-art-bg sticky top-0 z-40;
+}
+
+.art-logo {
+  @apply text-5xl font-black leading-[0.8] tracking-[-2px] uppercase font-display;
+}
+
+.art-meta {
+  @apply text-[14px] font-bold uppercase tracking-[2px] font-display;
+}
+
+
