@@ -32,10 +32,10 @@ export default function App() {
     <div className="min-h-screen bg-art-bg selection:bg-art-accent selection:text-white pb-20 md:pb-0">
       {/* Universal Header */}
       <header className="art-header">
-        <div className="art-logo">SF<br />PULSE</div>
+        <div className="art-logo">SUTA<br />60</div>
         <div className="art-meta text-right">
-          APR 17 — SAN FRANCISCO, CA
-          <div className="text-[10px] opacity-60">Conference 2026</div>
+          APR 17 — SILICON VALLEY, CA
+          <div className="text-[10px] opacity-60 uppercase tracking-widest font-black">60th Anniversary Gala</div>
         </div>
       </header>
 
@@ -52,12 +52,12 @@ export default function App() {
         <div className="bg-white overflow-y-auto flex flex-col scrollbar-hide">
           {/* Top Half: Greetings Module */}
           <div className="border-b border-art-gray p-8 flex flex-col items-center text-center">
-            <div className="art-section-title">Community Greetings</div>
+            <div className="art-section-title">Innovation Forum</div>
             <div className="w-32 h-32 rounded-full border-2 border-dashed border-art-ink flex items-center justify-center mb-6 bg-art-gray/30">
               <Camera size={40} strokeWidth={1.5} />
             </div>
-            <h2 className="text-2xl font-black uppercase mb-2 font-display">Hello, Guest!</h2>
-            <p className="text-sm opacity-60 mb-8 max-w-xs font-medium">Introduce yourself to fellow attendees with a quick snap.</p>
+            <h2 className="text-2xl font-black uppercase mb-2 font-display">Honoring Legacy.<br/>Engineering Future.</h2>
+            <p className="text-sm opacity-60 mb-8 max-w-xs font-medium">Connect with fellow alumni and share your vision for the next frontier.</p>
             <button onClick={() => setShowSelfieModal(true)} className="art-btn-primary">Send Greeting</button>
           </div>
           

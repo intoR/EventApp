@@ -1,6 +1,6 @@
 {
-  "name": "SF Pulse",
-  "description": "Your ultimate companion for the SF Conference. Explore the schedule, coordinate travel, share moments, and connect with fellow guests.",
+  "name": "SUTA 60",
+  "description": "Celebrating the 60th Anniversary of Sharif University of Technology Alumni. Explore the Innovation Forum schedule, coordinate travel, and join the Gala celebration.",
   "requestFramePermissions": [
     "camera",
     "geolocation"
